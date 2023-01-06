@@ -1,4 +1,5 @@
-using GraphQLDemo.API.Schema;
+using GraphQLDemo.API.Schema.Mutations;
+using GraphQLDemo.API.Schema.Queries;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +19,8 @@ namespace GraphQLDemo.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGraphQLServer()
-                .AddQueryType<Query>();
+                .AddQueryType<Query>()
+                .AddMutationType<Mutation>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
