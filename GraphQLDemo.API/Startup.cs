@@ -1,5 +1,6 @@
 using GraphQLDemo.API.Schema.Mutations;
 using GraphQLDemo.API.Schema.Queries;
+using GraphQLDemo.API.Schema.Subscriptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +21,11 @@ namespace GraphQLDemo.API
         {
             services.AddGraphQLServer()
                 .AddQueryType<Query>()
-                .AddMutationType<Mutation>();
+                .AddMutationType<Mutation>()
+                .AddSubscriptionType<Subscription>();
+
+            // Bunun yerine Redis de kullanabilirdik.
+            services.AddInMemorySubscriptions();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -32,6 +37,8 @@ namespace GraphQLDemo.API
             }
 
             app.UseRouting();
+
+            app.UseWebSockets();
 
             app.UseEndpoints(endpoints =>
             {

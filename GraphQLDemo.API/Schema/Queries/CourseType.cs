@@ -20,6 +20,14 @@ namespace GraphQLDemo.API.Schema.Queries
         public InstructorType Instructor { get; set; }
         public IEnumerable<StudentType> Students { get; set; }
 
+        /*
+         {
+            courses {
+            name
+            description
+            }
+         }
+        */
         public string Description()
         {
             return $"description: {Name}";

@@ -1,7 +1,5 @@
 ﻿using Bogus;
-using HotChocolate;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,6 +10,7 @@ namespace GraphQLDemo.API.Schema.Queries
         private readonly Faker<CourseType> _courseFaker;
         private readonly Faker<StudentType> _studentFaker;
         private readonly Faker<InstructorType> _instructorFaker;
+
         public Query()
         {
             _instructorFaker = new Faker<InstructorType>()
@@ -30,12 +29,48 @@ namespace GraphQLDemo.API.Schema.Queries
                 .RuleFor(x => x.Name, f => f.Name.JobTitle());
         }
 
+        /*
+         * query {
+            courses {
+              id
+              name
+              subject
+              instructor {
+                id
+                firstName
+                lastName
+                salary
+              }
+              students {
+                id
+                firstName
+                lastName
+                gpa
+                id
+              }
+            }
+        }
+         */
         public IEnumerable<CourseType> GetCourses()
         {
             List<CourseType> courses = _courseFaker.Generate(1);
             return courses;
         }
 
+        /*
+        {
+          courseById (id: "666ab08e-1438-47b2-a8f5-21ed717c1da9") {
+            name
+            instructor {
+              id
+              firstName
+            }
+            students {
+              firstName
+            }
+          }
+        }
+        */
         public async Task<CourseType> GetCourseById(Guid id)
         {
             await Task.Delay(1000);
