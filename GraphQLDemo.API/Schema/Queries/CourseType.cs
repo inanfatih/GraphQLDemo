@@ -1,10 +1,10 @@
-﻿using GraphQLDemo.API.DTOs;
+﻿using GraphQLDemo.API.DataLoaders;
+using GraphQLDemo.API.DTOs;
 using GraphQLDemo.API.Models;
-using GraphQLDemo.API.Services.Instructors;
 using HotChocolate;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GraphQLDemo.API.Schema.Queries
@@ -32,9 +32,10 @@ namespace GraphQLDemo.API.Schema.Queries
         public Guid InstructorId { get; set; }
 
         [GraphQLNonNullType]
-        public async Task<InstructorType> Instructor([Service] InstructorsRepository instructorsRepository) 
+        public async Task<InstructorType> Instructor([Service] InstructorDataLoader instructorDataLoader) 
         {
-            return new InstructorType(await instructorsRepository.GetById(InstructorId));
+            //DataLoader sayesinde InstructorId'leri biriktirip hepsi icin birden instructorDataLoader icinde tek query yapiliyor.
+            return new InstructorType(await instructorDataLoader.LoadAsync(InstructorId, CancellationToken.None));
         }
 
         public IEnumerable<StudentType> Students { get; set; }

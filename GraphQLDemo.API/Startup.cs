@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using GraphQLDemo.API.Services.Courses;
 using GraphQLDemo.API.Services.Instructors;
+using GraphQLDemo.API.DataLoaders;
 
 namespace GraphQLDemo.API
 {
@@ -39,6 +40,7 @@ namespace GraphQLDemo.API
 
             services.AddScoped<CoursesRepository>();
             services.AddScoped<InstructorsRepository>();
+            services.AddScoped<InstructorDataLoader>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
