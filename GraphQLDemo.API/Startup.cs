@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using GraphQLDemo.API.Services.Courses;
 
 namespace GraphQLDemo.API
 {
@@ -34,6 +35,8 @@ namespace GraphQLDemo.API
 
             string connectionString = _configuration.GetConnectionString("default");
             services.AddPooledDbContextFactory<SchoolDbContext>(o => o.UseSqlite(connectionString));
+
+            services.AddScoped<CoursesRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

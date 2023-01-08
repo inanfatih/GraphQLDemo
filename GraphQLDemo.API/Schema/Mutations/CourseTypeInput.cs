@@ -1,10 +1,9 @@
 ﻿using GraphQLDemo.API.Models;
-using GraphQLDemo.API.Schema.Queries;
 using System;
 
 namespace GraphQLDemo.API.Schema.Mutations
 {
-    public class CourseInputType
+    public class CourseTypeInput
     {
         public string Name { get; set; }
         public Subject Subject { get; set; }

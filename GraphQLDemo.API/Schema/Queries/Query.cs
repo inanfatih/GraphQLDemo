@@ -1,33 +1,21 @@
 ﻿using Bogus;
+using GraphQLDemo.API.DTOs;
 using GraphQLDemo.API.Models;
+using GraphQLDemo.API.Services.Courses;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace GraphQLDemo.API.Schema.Queries
 {
     public class Query
     {
-        private readonly Faker<CourseType> _courseFaker;
-        private readonly Faker<StudentType> _studentFaker;
-        private readonly Faker<InstructorType> _instructorFaker;
+        private readonly CoursesRepository _coursesRepository;
 
-        public Query()
+        public Query(CoursesRepository coursesRepository)
         {
-            _instructorFaker = new Faker<InstructorType>()
-                .RuleFor(c => c.FirstName, f => f.Name.FirstName())
-                .RuleFor(c => c.LastName, f => f.Name.LastName());
-
-            _studentFaker = new Faker<StudentType>()
-                .RuleFor(c => c.FirstName, f => f.Name.FirstName())
-                .RuleFor(c => c.LastName, f => f.Name.LastName());
-
-            _courseFaker = new Faker<CourseType>()
-                .RuleFor(x => x.Id, f => Guid.NewGuid())
-                .RuleFor(x => x.Subject, f => f.PickRandom<Subject>())
-                .RuleFor(x => x.Instructor, f => _instructorFaker.Generate())
-                .RuleFor(x => x.Students, f => _studentFaker.Generate(5))
-                .RuleFor(x => x.Name, f => f.Name.JobTitle());
+            _coursesRepository = coursesRepository;
         }
 
         /*
@@ -52,10 +40,10 @@ namespace GraphQLDemo.API.Schema.Queries
             }
         }
          */
-        public IEnumerable<CourseType> GetCourses()
+        public async Task<IEnumerable<CourseType>> GetCoursesAsync()
         {
-            List<CourseType> courses = _courseFaker.Generate(1);
-            return courses;
+            IEnumerable<CourseDTO> courseDTOs = await _coursesRepository.GetAll();
+            return courseDTOs.Select(x => new CourseType(x));
         }
 
         /*
@@ -72,12 +60,9 @@ namespace GraphQLDemo.API.Schema.Queries
           }
         }
         */
-        public async Task<CourseType> GetCourseById(Guid id)
+        public async Task<CourseType> GetCourseByIdAsync(Guid id)
         {
-            await Task.Delay(1000);
-            var course = _courseFaker.Generate();
-            course.Id = id;
-            return course;
+            return new CourseType(await _coursesRepository.GetById(id));
         }
     }
 }
