@@ -1,16 +1,11 @@
-﻿using HotChocolate;
+﻿using GraphQLDemo.API.Models;
+using HotChocolate;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace GraphQLDemo.API.Schema.Queries
 {
-    public enum Subject
-    {
-        Mathematics,
-        Science,
-        History
-    }
     public class CourseType
     {
         public Guid Id { get; set; }
