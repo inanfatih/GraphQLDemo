@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using GraphQLDemo.API.Services.Courses;
 using GraphQLDemo.API.Services.Instructors;
 using GraphQLDemo.API.DataLoaders;
+using System;
 
 namespace GraphQLDemo.API
 {
@@ -36,7 +37,7 @@ namespace GraphQLDemo.API
             services.AddInMemorySubscriptions();
 
             string connectionString = _configuration.GetConnectionString("default");
-            services.AddPooledDbContextFactory<SchoolDbContext>(o => o.UseSqlite(connectionString));
+            services.AddPooledDbContextFactory<SchoolDbContext>(o => o.UseSqlite(connectionString).LogTo(Console.WriteLine));
 
             services.AddScoped<CoursesRepository>();
             services.AddScoped<InstructorsRepository>();
