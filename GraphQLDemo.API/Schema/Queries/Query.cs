@@ -1,6 +1,4 @@
-﻿using Bogus;
-using GraphQLDemo.API.DTOs;
-using GraphQLDemo.API.Models;
+﻿using GraphQLDemo.API.DTOs;
 using GraphQLDemo.API.Services.Courses;
 using System;
 using System.Collections.Generic;

@@ -7,6 +7,10 @@ namespace GraphQLDemo.API.Schema.Queries
     {
         public InstructorType(InstructorDTO instructorDTO)
         {
+            if (instructorDTO == null)
+            {
+                return;
+            }
             Id = instructorDTO.Id;
             FirstName = instructorDTO.FirstName;
             LastName = instructorDTO.LastName;
