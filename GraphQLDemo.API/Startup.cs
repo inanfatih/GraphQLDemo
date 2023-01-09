@@ -12,6 +12,8 @@ using GraphQLDemo.API.Services.Courses;
 using GraphQLDemo.API.Services.Instructors;
 using GraphQLDemo.API.DataLoaders;
 using System;
+using FirebaseAdminAuthentication.DependencyInjection.Extensions;
+using FirebaseAdmin;
 
 namespace GraphQLDemo.API
 {
@@ -34,7 +36,14 @@ namespace GraphQLDemo.API
                 .AddSubscriptionType<Subscription>()
                 .AddFiltering()
                 .AddSorting()
-                .AddProjections();
+                .AddProjections()
+                .AddAuthorization();
+
+            services.AddSingleton(FirebaseApp.Create());
+            services.AddFirebaseAuthentication();
+
+            // Yukaridaki yerine 
+            // services.AddAuthentication().AddJwtBearer();
 
             // Bunun yerine Redis de kullanabilirdik.
             services.AddInMemorySubscriptions();
@@ -56,6 +65,8 @@ namespace GraphQLDemo.API
             }
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseWebSockets();
 
