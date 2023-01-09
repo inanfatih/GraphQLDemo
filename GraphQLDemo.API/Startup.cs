@@ -32,7 +32,8 @@ namespace GraphQLDemo.API
                 .AddQueryType<Query>()
                 .AddMutationType<Mutation>()
                 .AddSubscriptionType<Subscription>()
-                .AddFiltering();
+                .AddFiltering()
+                .AddSorting();
 
             // Bunun yerine Redis de kullanabilirdik.
             services.AddInMemorySubscriptions();

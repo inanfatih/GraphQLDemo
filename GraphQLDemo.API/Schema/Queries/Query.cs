@@ -43,6 +43,9 @@ namespace GraphQLDemo.API.Schema.Queries
             }
         }
         */
+        [UsePaging(IncludeTotalCount = true, DefaultPageSize = 5)]
+        [UseFiltering]
+        [UseSorting]
         public async Task<IEnumerable<CourseType>> GetCoursesAsync()
         {
             IEnumerable<CourseDTO> courseDTOs = await _coursesRepository.GetAll();
@@ -84,42 +87,47 @@ namespace GraphQLDemo.API.Schema.Queries
 
         /*
         {
-            paginatedFilteredCoursesAsync(first: 3, 
+          paginatedFilteredSortedCoursesAsync(first: 3, 
             where: {
-                or: [
+              or: [
                 {
-                    name: {
+                  name: {
                     contains: "hay"
-                    }
+                  }
                 },
                 {
-                    subject: {
+                  subject: {
                     eq: MATHEMATICS
-                    }
+                  }
                 }
-                ]
+              ]
+            },
+            order: {
+              name:DESC
+              subject: ASC
             })
             {
-                edges {
+              edges {
                 node {
-                    id
-                    name
-                    subject
+                  id
+                  name
+                  subject
                 }
                 cursor
             }
             pageInfo {
-                endCursor
+              endCursor
             }
             totalCount
-            }
+          }
         }
         */
         // HOT CHOCOLATE WILL APPLY THE PAGING AND FILTERING IN THE QUERY SO THIS WAY IS MORE EFFICIENT AND MORE PERFORMANT IN THE DB
         [UseDbContext(typeof(SchoolDbContext))]
         [UsePaging(IncludeTotalCount = true, DefaultPageSize = 5)]
-        [UseFiltering(typeof(CourseFilterType))] // Order of Filtering and paging matters. Paging must come before filtering
-        public IQueryable<CourseType> GetPaginatedFilteredCoursesAsync([ScopedService] SchoolDbContext context)
+        [UseFiltering/*(typeof(CourseFilterType))*/] // Order of Filtering and paging matters. Paging must come before filtering
+        [UseSorting]
+        public IQueryable<CourseType> GetPaginatedFilteredSortedCoursesAsync([ScopedService] SchoolDbContext context)
         {
             return context.Courses.Select(c => new CourseType()
             {
