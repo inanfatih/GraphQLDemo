@@ -31,7 +31,8 @@ namespace GraphQLDemo.API
             services.AddGraphQLServer()
                 .AddQueryType<Query>()
                 .AddMutationType<Mutation>()
-                .AddSubscriptionType<Subscription>();
+                .AddSubscriptionType<Subscription>()
+                .AddFiltering();
 
             // Bunun yerine Redis de kullanabilirdik.
             services.AddInMemorySubscriptions();
