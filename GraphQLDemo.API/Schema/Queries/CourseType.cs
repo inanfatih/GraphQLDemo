@@ -2,6 +2,7 @@
 using GraphQLDemo.API.DTOs;
 using GraphQLDemo.API.Models;
 using HotChocolate;
+using HotChocolate.Data;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -33,6 +34,8 @@ namespace GraphQLDemo.API.Schema.Queries
         public Guid Id { get; set; }
         public string Name { get; set; }
         public Subject Subject { get; set; }
+        [IsProjected(true)] // Asagida instructor query ederken bu alani kullandigimiz icin bu alanin her zaman gelmesi gerekiyor.
+                            // Bu yuzden IsProjectd(true) diye ekledik.
         public Guid InstructorId { get; set; }
 
         [GraphQLNonNullType]

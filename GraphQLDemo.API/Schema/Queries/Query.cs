@@ -125,6 +125,7 @@ namespace GraphQLDemo.API.Schema.Queries
         // HOT CHOCOLATE WILL APPLY THE PAGING AND FILTERING IN THE QUERY SO THIS WAY IS MORE EFFICIENT AND MORE PERFORMANT IN THE DB
         [UseDbContext(typeof(SchoolDbContext))]
         [UsePaging(IncludeTotalCount = true, DefaultPageSize = 5)]
+        [UseProjection] // BUNUNLA ALANLAR DIREKT DATABASE'E GONDERILIYOR VE SADECE ONLAR QUERY EDILIYOR
         [UseFiltering/*(typeof(CourseFilterType))*/] // Order of Filtering and paging matters. Paging must come before filtering
         [UseSorting]
         public IQueryable<CourseType> GetPaginatedFilteredSortedCoursesAsync([ScopedService] SchoolDbContext context)
