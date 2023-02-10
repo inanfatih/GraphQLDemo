@@ -6,6 +6,10 @@ namespace GraphQLDemo.API.Schema.Queries
 {
     public class StudentType
     {
+        public StudentType()
+        {
+
+        }
         public StudentType(StudentDTO studentDTO)
         {
             if (studentDTO == null)

@@ -34,7 +34,8 @@ namespace GraphQLDemo.API.Schema.Mutations
           }
         }
          */
-        [Authorize]
+
+        // [Authorize]
         public async Task<CourseResult> CreateCourse(
             CourseTypeInput courseInput, 
             [Service] ITopicEventSender topicEventSender,
@@ -66,6 +67,7 @@ namespace GraphQLDemo.API.Schema.Mutations
             }
         }
          */
+
         [Authorize]
         public async Task<CourseResult> UpdateCourse(Guid id, CourseTypeInput courseInput, [Service] ITopicEventSender topicEventSender)
         {

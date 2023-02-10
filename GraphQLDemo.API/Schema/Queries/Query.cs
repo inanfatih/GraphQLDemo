@@ -21,112 +21,108 @@ namespace GraphQLDemo.API.Schema.Queries
             _coursesRepository = coursesRepository;
         }
 
-        /*
-         * query {
-            courses {
-              id
-              name
-              subject
-              instructor {
-                id
-                firstName
-                lastName
-                salary
-              }
-              students {
-                id
-                firstName
-                lastName
-                gpa
-                id
-              }
-            }
-        }
-        */
-        [UsePaging(IncludeTotalCount = true, DefaultPageSize = 5)]
-        [UseFiltering]
-        [UseSorting]
         public async Task<IEnumerable<CourseType>> GetCoursesAsync()
         {
             IEnumerable<CourseDTO> courseDTOs = await _coursesRepository.GetAll();
             return courseDTOs.Select(x => new CourseType(x));
         }
 
-        /*
-         query {
-          coursesCurserPagination (first: 3, after: "Mg==") {
-            edges {
-              node {
-                id
-                name
-                subject
-                instructorId
-              }
-              cursor
-            }
-            pageInfo {
-              hasNextPage
-              hasPreviousPage
-              startCursor
-              endCursor
-            }
-            totalCount
-          }
+        [UsePaging(IncludeTotalCount = true, DefaultPageSize = 5)]
+        public IQueryable<CourseType> GetCoursesPaging([ScopedService] SchoolDbContext context)
+        {
+            return context.Courses.Select(c => new CourseType()
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Subject = c.Subject,
+                InstructorId = c.InstructorId
+            });
         }
-        */
+        
+        // Cursor based pagination is recommended but offset based pagination is also available
+        [UseOffsetPaging(IncludeTotalCount = true, DefaultPageSize = 5)]
+        public IQueryable<CourseType> GetCoursesOffsetPagination([ScopedService] SchoolDbContext context)
+        {
+            return context.Courses.Select(c => new CourseType()
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Subject = c.Subject,
+                InstructorId = c.InstructorId
+            });
+        }
+
+        [UseFiltering]
+        public IQueryable<CourseType> GetCoursesFiltering([ScopedService] SchoolDbContext context)
+        {
+            return context.Courses.Select(c => new CourseType()
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Subject = c.Subject,
+                InstructorId = c.InstructorId
+            });
+        }
+
+        [UseSorting]
+        public async Task<IEnumerable<CourseType>> GetCoursesSortingAsync()
+        {
+            IEnumerable<CourseDTO> courseDTOs = await _coursesRepository.GetAll();
+            return courseDTOs.Select(x => new CourseType(x));
+        }
+
+        [UseDbContext(typeof(SchoolDbContext))]
+        [UsePaging(IncludeTotalCount = true, DefaultPageSize = 5)]
+        [UseProjection]
+        [UseFiltering] // Order of Filtering and paging matters. Paging must come before filtering
+        [UseSorting]
+        public IQueryable<CourseType> GetCoursesPagingFilteringSorting([ScopedService] SchoolDbContext context)
+        {
+            return context.Courses.Select(c => new CourseType()
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Subject = c.Subject,
+                InstructorId = c.InstructorId
+            });
+        }
+
+        public async Task<CourseType> GetCourseByIdAsync(Guid id)
+        {
+            return new CourseType(await _coursesRepository.GetById(id));
+        }
+
+        [UseDbContext(typeof(SchoolDbContext))]
+        [UsePaging(IncludeTotalCount = true, DefaultPageSize = 5)]
+        [UseProjection]
+        [UseFiltering] // Order of Filtering and paging matters. Paging must come before filtering
+        [UseSorting]
+        public IQueryable<StudentType> GetStudents([ScopedService] SchoolDbContext context)
+        {
+            return context.Students.Select(x => new StudentType(x));
+        }
+
+        [UseDbContext(typeof(SchoolDbContext))]
+        public IQueryable<InstructorType> GetInstructors([ScopedService] SchoolDbContext context)
+        {
+            return context.Instructors.Select(x => new InstructorType(x));
+        }
+
         // Cursor based pagination is the recommended way of pagination.
         // THIS WAY IS NOT EFFICIENT IN THE DB: PAGINATION WILL NOT BE USED WHEN QUERYING FROM THE DB
         // SO ALL RESULTS WILL BE RETRIEVED FROM THE DB FIRST AND THEN THE RESULTS WILL BE PAGINATED
         [UsePaging(IncludeTotalCount = true, DefaultPageSize = 5)]
-        [UseFiltering] // Order of Filtering and paging matters. Paging must come before filtering
+        [UseFiltering]
         public async Task<IEnumerable<CourseType>> GetCoursesCurserPaginationAsync()
         {
             IEnumerable<CourseDTO> courseDTOs = await _coursesRepository.GetAll();
             return courseDTOs.Select(x => new CourseType(x));
         }
 
-        /*
-        {
-          paginatedFilteredSortedCoursesAsync(first: 3, 
-            where: {
-              or: [
-                {
-                  name: {
-                    contains: "hay"
-                  }
-                },
-                {
-                  subject: {
-                    eq: MATHEMATICS
-                  }
-                }
-              ]
-            },
-            order: {
-              name:DESC
-              subject: ASC
-            })
-            {
-              edges {
-                node {
-                  id
-                  name
-                  subject
-                }
-                cursor
-            }
-            pageInfo {
-              endCursor
-            }
-            totalCount
-          }
-        }
-        */
-        // HOT CHOCOLATE WILL APPLY THE PAGING AND FILTERING IN THE QUERY SO THIS WAY IS MORE EFFICIENT AND MORE PERFORMANT IN THE DB
         [UseDbContext(typeof(SchoolDbContext))]
         [UsePaging(IncludeTotalCount = true, DefaultPageSize = 5)]
-        [UseProjection] // BUNUNLA ALANLAR DIREKT DATABASE'E GONDERILIYOR VE SADECE ONLAR QUERY EDILIYOR
-        [UseFiltering/*(typeof(CourseFilterType))*/] // Order of Filtering and paging matters. Paging must come before filtering
+        [UseProjection]
+        [UseFiltering]
         [UseSorting]
         public IQueryable<CourseType> GetPaginatedFilteredSortedCoursesAsync([ScopedService] SchoolDbContext context)
         {
@@ -139,50 +135,24 @@ namespace GraphQLDemo.API.Schema.Queries
             });
         }
 
-        /*
-        query {
-            coursesOffsetPagination (skip: 2, take: 1) {
-            items {
-                id 
-                name
-                subject
-                instructorId 
-                __typename
-            }
-            pageInfo {
-                __typename
-                hasNextPage
-                hasPreviousPage
-            }
-            totalCount
-            }
-        }
-        */
-        // Cursor based pagination is recommended but offset based pagination is also available
-        [UseOffsetPaging(IncludeTotalCount = true, DefaultPageSize = 5)]
-        public async Task<IEnumerable<CourseType>> GetCoursesOffsetPaginationAsync()
+        [UseFiltering]
+        public async Task<IEnumerable<CourseType>> GetCoursesInefficientlyAsync()
         {
             IEnumerable<CourseDTO> courseDTOs = await _coursesRepository.GetAll();
             return courseDTOs.Select(x => new CourseType(x));
         }
 
-        /*
+        [UseDbContext(typeof(SchoolDbContext))]
+        [UseFiltering]
+        public IQueryable<CourseType> GetCoursesEfficiently([ScopedService] SchoolDbContext context)
         {
-          courseById (id: "666ab08e-1438-47b2-a8f5-21ed717c1da9") {
-            name
-            instructor {
-              id
-              firstName
-            }
-            students {
-              firstName
-            }
-          }
-        }
-        */
-        public async Task<CourseType> GetCourseByIdAsync(Guid id)
-        {
-            return new CourseType(await _coursesRepository.GetById(id));
+            return context.Courses.Select(c => new CourseType()
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Subject = c.Subject,
+                InstructorId = c.InstructorId
+            });
         }
     }
 }
