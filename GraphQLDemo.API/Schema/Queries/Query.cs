@@ -27,6 +27,7 @@ namespace GraphQLDemo.API.Schema.Queries
             return courseDTOs.Select(x => new CourseType(x));
         }
 
+        [UseDbContext(typeof(SchoolDbContext))]
         [UsePaging(IncludeTotalCount = true, DefaultPageSize = 5)]
         public IQueryable<CourseType> GetCoursesPaging([ScopedService] SchoolDbContext context)
         {
@@ -38,8 +39,9 @@ namespace GraphQLDemo.API.Schema.Queries
                 InstructorId = c.InstructorId
             });
         }
-        
+
         // Cursor based pagination is recommended but offset based pagination is also available
+        [UseDbContext(typeof(SchoolDbContext))]
         [UseOffsetPaging(IncludeTotalCount = true, DefaultPageSize = 5)]
         public IQueryable<CourseType> GetCoursesOffsetPagination([ScopedService] SchoolDbContext context)
         {
@@ -52,6 +54,7 @@ namespace GraphQLDemo.API.Schema.Queries
             });
         }
 
+        [UseDbContext(typeof(SchoolDbContext))]
         [UseFiltering]
         public IQueryable<CourseType> GetCoursesFiltering([ScopedService] SchoolDbContext context)
         {
